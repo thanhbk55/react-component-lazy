@@ -1,0 +1,19 @@
+{
+  "name": "react-component-lazy",
+  "author": "Dinh Duy Thanh <dinhduythanh51292@gmail.com>",
+  "version": "1.0.2",
+  "license": "MIT",
+  "description": "A lightweight libraries using IntersectionObserver for lazyload your Components, Images or anything.",
+  "keywords": [
+    "react-lazy",
+    "react-component",
+    "component-lazy",
+    "lazyload",
+    "react"
+  ],
+  "dependencies": {
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-scripts": "1.1.4"
+  }
+}
