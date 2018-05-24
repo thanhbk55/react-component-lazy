@@ -3,7 +3,8 @@
     ["env", {
       "loose": true
     }],
-    "react"
+    "react",
+    "stage-0"
   ],
   "plugins": [
     [
