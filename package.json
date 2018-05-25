@@ -12,7 +12,8 @@
     "react"
   ],
   "scripts": {
-    "build": "babel src --out-dir lib"
+    "clean": "rm -rf lib && mkdir lib",
+    "build": "npm run clean && babel src --out-dir lib"
   },
   "devDependencies": {
     "react": "^16.3.2",

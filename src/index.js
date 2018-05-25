@@ -1,2 +1,3 @@
-export {default as LazyImport} from './src/LazyImport'
-export default, {default as LazyComponent} from './src/LazyComponent'
+export {default as LazyImport} from './LazyImport'
+export {default as LazyVisible} from './LazyVisible'
+export default, {default as LazyComponent} from './LazyComponent'

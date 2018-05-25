@@ -16,7 +16,7 @@ function LazyImport(load, opts) {
         this.setState({Component: Component})
       }).catch(err => {
         this.setState({err: "import error"})
-        throw err;
+        throw err
       })
     }
 
@@ -26,10 +26,10 @@ function LazyImport(load, opts) {
         return <div>{err}</div>
       }
       return Component ?
-        Component.default ? <Component.default /> : <Component />
+        Component.default ? <Component.default {...this.props}/> : <Component {...this.props}/>
         : null
     }
   }
 }
 
-module.exports = LazyImport;
+module.exports = LazyImport
