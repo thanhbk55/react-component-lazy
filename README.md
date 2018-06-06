@@ -5,6 +5,7 @@ A lightweight libraries for lazyload your Components, Images or anything.
   - Lazyload your Components using [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
   - Loading components with [dynamic imports](https://reactjs.org/docs/code-splitting.html)
   - **Lazyload your Components and loading components with dynamic imports once time**
+  - Creating a great "Loading..." Component
 
 ## Lazyload your Components using [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
  Load content that is visible on the screen.
@@ -91,3 +92,23 @@ export default class App extends React.Component {
   }
 }
 ```
+
+## Creating a great "Loading..." Component
+You can customm default element, that is rendered before commponent loaded
+
+```js
+import {LazyVisible} from 'react-component-lazy'
+const Component = LazyVisible(() => import('./Component'), {
+  height: 300,
+  loadding(){
+    return <div>Loading...</div>
+  }
+})
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <Component />
+    )
+  }
+}
