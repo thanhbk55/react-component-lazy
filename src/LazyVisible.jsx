@@ -11,15 +11,44 @@ io = new window.IntersectionObserver((entries) => {
   })
 })
 
+function checkError(opts){
+  let check = false
+  const opt_check_arr = [
+    {field: "height", type: "number"},
+    {field: "loadding", type: "function"}
+  ]
+  opt_check_arr.forEach((item) => {
+    if(opts[item.field] && typeof(opts[item.field]) !== item.type){
+      console.log(`\nparam '${item.field}' invalid\n`)
+      check = true
+    }
+  })
+  return check
+}
+
+class ErrorComponent extends Component {
+  render(){
+    return null
+  }
+}
+
 function LazyVisible(load, opts={}) {
+  if(checkError(opts)){
+    return ErrorComponent
+  }
+  let result = {
+    Component: null
+  }
 
   return class LazyVisibleComponent extends Component {
+
     constructor(props){
       super(props)
       this.state = {
-        Component: null,
+        Component: result.Component,
         err: null,
-        defaultHeight: opts.height || 500
+        defaultHeight: opts.height || 500,
+        loading: opts.loading
       }
     }
 
@@ -39,12 +68,15 @@ function LazyVisible(load, opts={}) {
 
     showLoader = () => {
       this.removeTrackedLoader()
-      load().then((Component) => {
-        this.setState({Component: Component})
-      }).catch(err => {
-        this.setState({err: "import error"})
-        throw err
-      })
+      if(!this.state.Component){
+        load().then((Component) => {
+          result.Component = Component
+          this.setState({Component: Component})
+        }).catch(err => {
+          this.setState({err: true})
+          throw err
+        })
+      }
     }
 
     removeTrackedLoader = () => {
@@ -53,19 +85,28 @@ function LazyVisible(load, opts={}) {
     }
 
     render(){
-      const {Component, defaultHeight, err} = this.state
+      const {
+        Component,
+        defaultHeight,
+        err,
+        loading
+      } = this.state
 
       if (err) {
-        return <div>{err}</div>
+        return <ErrorComponent/>
       }
 
       if(Component){
         return Component ?
         Component.default ? <Component.default {...this.props}/> : <Component {...this.props}/>
-        : null
+        : <ErrorComponent/>
       }
 
-      return <div style={{height: defaultHeight+"px"}} ref={this.initRef}/>
+      return (
+        <div style={{height: defaultHeight+"px"}} ref={this.initRef}>
+          {loading && loading()}
+        </div>
+      )
     }
   }
 }
