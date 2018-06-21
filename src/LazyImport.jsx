@@ -1,12 +1,22 @@
 import React, {Component} from 'react'
 
+function retry(retryFn, retries=0) {
+  console.log(`${retries} retries left!`)
+  const promise = new Promise(retryFn)
+  if(retries > 0) {
+    return promise.catch(error => retry(retryFn, --retries))
+  }
+
+  return promise
+}
+
 class ErrorComponent extends Component {
   render(){
     return null
   }
 }
 
-function LazyImport(load, opts) {
+function LazyImport(load, opts={}) {
   let result = {
     Component: null
   }
@@ -16,18 +26,42 @@ function LazyImport(load, opts) {
       super(props)
       this.state = {
         Component: result.Component,
-        err: false
+        err: false,
+        retries: opts.retries || 30
       }
     }
+    
+    // componentDidUpdate(){
+    //   if(!this.state.Component && this.state.err){
+    //     this.loadComponent()
+    //   }
+    // }
 
     componentWillMount() {
-      load().then((Component) => {
-        result.Component = Component
-        this.setState({Component: Component})
-      }).catch(err => {
-        this.setState({err: true})
-        throw err
-      })
+      this.loadComponent()
+    }
+    
+    loadComponent(){
+      retry((resolve, reject) => {
+        load().then((Component) => {
+          resolve(Component)
+        }).catch(err => {
+          setTimeout(() => {
+            reject(err)
+          }, 1000);
+        })
+      }, this.state.retries).then(
+        (Component) => {
+          result.Component = Component
+          this.setState({Component: Component, err: false})
+        }
+      )
+      .catch(
+        (error) => {
+          !this.state.err && this.setState({err: true})
+          throw err
+        }
+      )
     }
 
     render(){
