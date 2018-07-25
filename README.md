@@ -6,6 +6,7 @@ A lightweight libraries for lazyload your Components, Images or anything.
   - Loading components with [dynamic imports](https://reactjs.org/docs/code-splitting.html)
   - **Lazyload your Components and loading components with dynamic imports once time**
   - Creating a great "Loading..." Component
+  - Creating a Error Alert
 
 ## Lazyload your Components using [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
  Load content that is visible on the screen.
@@ -93,6 +94,18 @@ export default class App extends React.Component {
 }
 ```
 
+**retries**
+Auto retry load component when error. (default: 3)
+```js
+const Component = LazyVisible(() => import('./Component'), {retries: 5})
+```
+
+**delay**
+Delaytime for load component
+```js
+const Component = LazyVisible(() => import('./Component'), {delay: 500})
+```
+
 ## Creating a great "Loading..." Component
 You can customm default element, that is rendered before commponent loaded
 
@@ -112,3 +125,22 @@ export default class App extends React.Component {
     )
   }
 }
+```
+
+## Creating a Error Alert
+You can customm Error Alert, that is rendered when component load failed
+
+```js
+error(retry, error){
+  return (
+    <div className="load-failed">
+      <p className="error">
+        <i className="material-icons">warning</i>
+        読み込みに失敗しました。もう一度お試しください。
+      </p>
+      <button className="btn btn-danger" onClick={retry}>リトライ</button>
+    </div>
+  )
+}
+```
+[![](https://qiita-image-store.s3.amazonaws.com/0/114590/16f41060-d334-12da-e756-e499a15b3a17.png)](https://qiita-image-store.s3.amazonaws.com/0/114590/16f41060-d334-12da-e756-e499a15b3a17.png)
