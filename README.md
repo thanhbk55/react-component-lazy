@@ -15,13 +15,24 @@ A lightweight libraries for lazyload your Components, Images or anything.
 import LazyComponent from 'react-component-lazy'
 import Component from './Component'
 
-
 export default class App extends React.Component {
   render() {
     return (
       <LazyComponent>
         <Component />
       <LazyComponent>
+    )
+  }
+}
+
+//or 
+import {LazyComponent} from 'react-component-lazy'
+const Component = LazyComponent(require('./Component'))
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <Component />
     )
   }
 }
@@ -36,6 +47,9 @@ return (
     <Component />
   <LazyComponent>
 )
+
+//or 
+const Component = LazyComponent(require('./Component'), {height: 300})
 ```
 
 **visible**
@@ -46,6 +60,8 @@ return (
     <Component />
   <LazyComponent>
 )
+//or
+const Component = LazyComponent(require('./Component'), {visible: true}
 ```
 
 ## Loading components with [dynamic imports](https://reactjs.org/docs/code-splitting.html)
