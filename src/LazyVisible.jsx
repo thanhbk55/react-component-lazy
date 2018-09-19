@@ -15,7 +15,7 @@ function retry(retryFn, retries=0) {
   console.log(`${retries} retries left!`)
   const promise = new Promise(retryFn)
   if(retries > 0) {
-    return promise.catch(error => retry(retryFn, --retries))
+    return promise.catch(() => retry(retryFn, --retries))
   }
 
   return promise
