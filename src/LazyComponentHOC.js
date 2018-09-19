@@ -19,7 +19,6 @@ function LazyComponentHOC(load, opts={}) {
       super(props)
       this.state = {
         Component: load,
-        err: null,
         defaultHeight: opts.height || 500
       }
     }
@@ -54,7 +53,6 @@ function LazyComponentHOC(load, opts={}) {
       const {
         Component,
         defaultHeight,
-				err,
 				visible
       } = this.state
 			if(visible){
