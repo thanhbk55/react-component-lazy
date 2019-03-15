@@ -1,6 +1,20 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
+(function(window, document) {
+  'use strict';
+
+  if(!window.IntersectionObserver){
+    class LazyComponent extends Component {
+      render(){
+        return this.props.children
+      }
+    }
+
+    module.exports = LazyComponent
+    return
+  }
+
 let io
 let loaders = new Map()
 io = new window.IntersectionObserver((entries) => {
@@ -13,7 +27,7 @@ io = new window.IntersectionObserver((entries) => {
   })
 })
 
-export default class LazyComponent extends Component {
+class LazyComponent extends Component {
   static propTypes = {
     visible: PropTypes.bool,
     height: PropTypes.oneOfType([
@@ -66,3 +80,5 @@ export default class LazyComponent extends Component {
     return <div style={{height: defaultHeight+"px"}} ref={this.initRef}/>
   }
 }
+module.exports = LazyComponent
+}(window, document))

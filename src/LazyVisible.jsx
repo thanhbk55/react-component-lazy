@@ -1,4 +1,99 @@
 import React, {Component, Fragment} from 'react'
+
+(function(window, document) {
+  'use strict';
+  function retry(retryFn, retries=0) {
+    console.log(`${retries} retries left!`)
+    const promise = new Promise(retryFn)
+    if(retries > 0) {
+      return promise.catch(() => retry(retryFn, --retries))
+    }
+  
+    return promise
+  }
+
+  class ErrorComponent extends Component {
+    render(){
+      const {err, show_error, retryFn} = this.props
+      if(!show_error) return null
+      return (
+        <div>
+          {show_error(retryFn, err)}
+        </div>
+      )
+    }
+  }
+
+  if(!window.IntersectionObserver){
+    function LazyVisible(load, opts={}) {
+      let result = {
+        Component: null,
+        err: null,
+        loading: opts.loading
+      }
+  
+      return class LazyVisibleComponent extends Component {
+        constructor(props){
+          super(props)
+          this.state = {
+            Component: result.Component,
+            err: null,
+          }
+        }
+
+        componentDidMount() {
+          retry((resolve, reject) => {
+            load().then((Component) => {
+              resolve(Component)
+            }).catch(err => {
+              reject(err)
+            })
+          }, this.state.retries).then(
+            (Component) => {
+              result.Component = Component
+              this.setState({Component: Component, err: false})
+            }
+          )
+          .catch(
+            (err) => {
+              !this.state.err && this.setState({err: true})
+              this.clearTimeOut()
+              throw err
+            }
+          )
+        }
+
+        render(){
+          const {
+            Component,
+            loading,
+            err
+          } = this.state
+  
+          if (err) {
+            return <ErrorComponent err={err} show_error={opts.error} retryFn={this.showLoader}/>
+          }
+  
+          if(Component){
+            return Component ?
+            Component.default ? <Component.default {...this.props}/> : <Component {...this.props}/>
+            : <ErrorComponent/>
+          }
+  
+          return (
+            <div>
+              {loading && loading()}
+            </div>
+          )
+        }
+      }
+    }
+  
+    module.exports = LazyVisible
+
+    return
+  }
+
 let io
 let loaders = new Map()
 io = new window.IntersectionObserver((entries) => {
@@ -10,16 +105,6 @@ io = new window.IntersectionObserver((entries) => {
     }
   })
 })
-
-function retry(retryFn, retries=0) {
-  console.log(`${retries} retries left!`)
-  const promise = new Promise(retryFn)
-  if(retries > 0) {
-    return promise.catch(() => retry(retryFn, --retries))
-  }
-
-  return promise
-}
 
 function checkError(opts){
   let check = false
@@ -35,18 +120,6 @@ function checkError(opts){
     }
   })
   return check
-}
-
-class ErrorComponent extends Component {
-  render(){
-    const {err, show_error, retryFn} = this.props
-    if(!show_error) return null
-    return (
-      <div>
-        {show_error(retryFn, err)}
-      </div>
-    )
-  }
 }
 
 function LazyVisible(load, opts={}) {
@@ -160,3 +233,4 @@ function LazyVisible(load, opts={}) {
 }
 
 module.exports = LazyVisible
+}(window, document))
