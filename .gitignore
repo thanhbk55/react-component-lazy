@@ -10,7 +10,7 @@
 /build
 
 #npm
-/lib
+# /lib
 
 # misc
 .DS_Store

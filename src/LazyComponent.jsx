@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+require('intersection-observer')
 
 let io
 let loaders = new Map()

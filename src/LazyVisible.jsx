@@ -1,4 +1,6 @@
 import React, {Component, Fragment} from 'react'
+require('intersection-observer')
+
 let io
 let loaders = new Map()
 io = new window.IntersectionObserver((entries) => {
