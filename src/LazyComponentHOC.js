@@ -1,4 +1,25 @@
 import React, {Component, Fragment} from 'react'
+
+(function(window, document) {
+  'use strict';
+
+  if(!window.IntersectionObserver){
+    function LazyComponentHOC(load, opts={}) {
+
+      return class DefaultComponent extends Component {
+        render(){
+          return load ?
+          load.default ? <load.default {...this.props}/> : <load {...this.props}/>
+          : null
+        }
+      }
+    }
+
+    module.exports = LazyComponentHOC
+
+    return
+  }
+
 let io
 let loaders = new Map()
 io = new window.IntersectionObserver((entries) => {
@@ -38,10 +59,10 @@ function LazyComponentHOC(load, opts={}) {
     }
 
     showLoader = () => {
-			this.removeTrackedLoader()
-			this.setState({
-				visible: true
-			})
+      this.removeTrackedLoader()
+      this.setState({
+        visible: true
+      })
     }
 
     removeTrackedLoader = () => {
@@ -53,13 +74,13 @@ function LazyComponentHOC(load, opts={}) {
       const {
         Component,
         defaultHeight,
-				visible
+        visible
       } = this.state
-			if(visible){
-				return Component ?
-				Component.default ? <Component.default {...this.props}/> : <Component {...this.props}/>
-				: null
-			}
+      if(visible){
+        return Component ?
+        Component.default ? <Component.default {...this.props}/> : <Component {...this.props}/>
+        : null
+      }
 
       return <div style={{height: defaultHeight+"px"}} ref={this.initRef}/>
     }
@@ -67,3 +88,5 @@ function LazyComponentHOC(load, opts={}) {
 }
 
 module.exports = LazyComponentHOC
+
+}(window, document))
